@@ -10,6 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+from dotenv import load_dotenv
+load_dotenv()
+from os import environ
+
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,12 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-tlv)36c^h%me#0j)!67193036i0(q!%)rm_9k19_&32jf9!t3b'
+SECRET_KEY = environ.get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', '.vercel.app']
 
 
 # Application definition
@@ -77,11 +81,19 @@ WSGI_APPLICATION = 'python_heroku_task.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'python_heroku_task',
-        'USER': 'sample_user',
-        'PASSWORD': 'password',
-        'HOST': 'localhost',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+   # el host de tu base de datos
+        'HOST': environ.get('SUPABASE_HOST'),
+        # la contraseña que utilizaste al crear el proyecto
+        'PASSWORD': environ.get('SUPABASE_PASSWORD'),
         'PORT': '5432',
+        # estas opciones se pasan a postgres, es opcional, pero recomendado
+        'OPTIONS': {
+            'sslmode': 'verify-full',
+            # el certificado que te de SUPABASE
+            'sslrootcert': Path.joinpath(BASE_DIR, 'prod-ca-2021.crt')
+        }
     }
 }
 
